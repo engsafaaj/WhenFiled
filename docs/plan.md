@@ -54,7 +54,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - `D:\Sorted` + 2019-07-04 → `D:\Sorted\2019\07`, shown as `2019\07\`.
     - A target of 260 characters or more → "Path too long".
 
-- [ ] **T7 Planner and summary (D14, D21).** Uses a fake `IDestinationView`.
+- [x] **T7 Planner and summary (D14, D21).** Uses a fake `IDestinationView`.
   - Test `PlannerTests` (logic for AC4, AC6 and AC8):
     - A free name is kept. `写真.jpg` and `Café 😀.jpg` are kept exactly.
     - An identical file already there → "Already in destination".
