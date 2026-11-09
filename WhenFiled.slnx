@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/WhenFiled.App/WhenFiled.App.csproj" />
+    <Project Path="src/WhenFiled.Core/WhenFiled.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WhenFiled.Tests/WhenFiled.Tests.csproj" />
+  </Folder>
+</Solution>

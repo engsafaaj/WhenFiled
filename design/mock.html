@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WhenFiled mock</title>
+<style>
+  :root {
+    --bg: #f3f3f3; --card: #fbfbfb; --stroke: #e0e0e0; --text: #1b1b1b; --sub: #5d5d5d;
+    --accent: #0067c0; --accent-text: #fff; --ok: #0f7b0f; --warn: #9d5d00; --err: #c42b1c;
+    --ok-bg: #dff6dd; --warn-bg: #fff4ce; --err-bg: #fde7e9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: #9aa5b1; font: 14px/1.4 "Segoe UI Variable Text", "Segoe UI", sans-serif; color: var(--text); }
+  .state-radio { position: absolute; opacity: 0; pointer-events: none; }
+
+  /* review switcher (not part of the app) */
+  .switcher { max-width: 960px; margin: 0 auto 12px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; color: #fff; }
+  .switcher b { margin-right: 6px; }
+  .switcher label { padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,.25); cursor: pointer; }
+  .switcher label:hover { background: rgba(255,255,255,.4); }
+
+  /* window */
+  .window { max-width: 960px; margin: 0 auto; background: var(--bg); border: 1px solid #7a7a7a; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,.35); overflow: hidden; }
+  .titlebar { display: flex; align-items: center; height: 32px; padding-left: 12px; font-size: 12px; background: #eaeaea; }
+  .titlebar .title { flex: 1; }
+  .titlebar .btns span { display: inline-block; width: 46px; height: 32px; line-height: 32px; text-align: center; }
+  .titlebar .btns span:last-child:hover { background: #c42b1c; color: #fff; }
+  .content { padding: 16px 20px 20px; min-height: 520px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 12px; }
+
+  /* controls */
+  .folders { display: grid; grid-template-columns: 90px 1fr auto; gap: 8px 10px; align-items: center; margin-bottom: 14px; }
+  .field { height: 32px; line-height: 30px; padding: 0 10px; background: #fff; border: 1px solid var(--stroke); border-bottom-color: #8a8a8a; border-radius: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .field.placeholder { color: var(--sub); }
+  .field.bad { border-bottom-color: var(--err); }
+  .btn { display: inline-block; height: 32px; line-height: 30px; padding: 0 16px; background: #fff; border: 1px solid var(--stroke); border-bottom-color: #c0c0c0; border-radius: 4px; cursor: pointer; user-select: none; color: var(--text); }
+  .btn:hover { background: #f6f6f6; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .btn.primary:hover { background: #1a75c8; }
+  .btn.disabled { opacity: .45; pointer-events: none; }
+  .actions { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+  .actions .spacer { flex: 1; }
+  .banner { display: flex; gap: 10px; padding: 10px 14px; border-radius: 4px; border: 1px solid var(--stroke); margin: 12px 0; }
+  .banner .icon { font-weight: 700; }
+  .banner.ok { background: var(--ok-bg); } .banner.ok .icon { color: var(--ok); }
+  .banner.warn { background: var(--warn-bg); } .banner.warn .icon { color: var(--warn); }
+  .banner.err { background: var(--err-bg); } .banner.err .icon { color: var(--err); }
+  .muted { color: var(--sub); }
+  .card { background: var(--card); border: 1px solid var(--stroke); border-radius: 6px; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 600; font-size: 12px; color: var(--sub); padding: 6px 10px; border-bottom: 1px solid var(--stroke); }
+  td { padding: 5px 10px; border-bottom: 1px solid #efefef; white-space: nowrap; }
+  tr.group td { background: #f0f0f0; font-weight: 600; font-size: 12px; padding: 6px 10px; }
+  tr.group.nodate td { background: var(--warn-bg); color: var(--warn); }
+  .tag { padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #e8f1fb; color: #004a8f; }
+  .tag.none { background: var(--warn-bg); color: var(--warn); }
+  .tag.skip { background: #ececec; color: var(--sub); }
+
+  .bar { height: 4px; margin: 14px 0; background: #e0e0e0; border-radius: 2px; overflow: hidden; position: relative; }
+  .bar i { position: absolute; top: 0; bottom: 0; width: 30%; background: var(--accent); border-radius: 2px; animation: slide 1.4s ease-in-out infinite; }
+  @keyframes slide { from { left: -30%; } to { left: 100%; } }
+
+  /* state sections: shown by the checked radio */
+  .state { display: none; }
+  #st-empty:checked ~ .window .s-empty,
+  #st-scanning:checked ~ .window .s-scanning,
+  #st-preview:checked ~ .window .s-preview,
+  #st-done:checked ~ .window .s-done,
+  #st-error:checked ~ .window .s-error { display: block; }
+  /* highlight the active switcher label */
+  #st-empty:checked ~ .switcher [for=st-empty],
+  #st-scanning:checked ~ .switcher [for=st-scanning],
+  #st-preview:checked ~ .switcher [for=st-preview],
+  #st-done:checked ~ .switcher [for=st-done],
+  #st-error:checked ~ .switcher [for=st-error] { background: #fff; color: #1b1b1b; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<input class="state-radio" type="radio" name="st" id="st-empty" checked>
+<input class="state-radio" type="radio" name="st" id="st-scanning">
+<input class="state-radio" type="radio" name="st" id="st-preview">
+<input class="state-radio" type="radio" name="st" id="st-done">
+<input class="state-radio" type="radio" name="st" id="st-error">
+
+<div class="switcher">
+  <b>Mock state:</b>
+  <label for="st-empty">Empty</label>
+  <label for="st-scanning">Scanning</label>
+  <label for="st-preview">Preview</label>
+  <label for="st-done">Done</label>
+  <label for="st-error">Error</label>
+</div>
+
+<div class="window">
+  <div class="titlebar">
+    <span class="title">WhenFiled</span>
+    <span class="btns"><span>&#x2013;</span><span>&#x25A1;</span><span>&#x2715;</span></span>
+  </div>
+  <div class="content">
+    <!-- EMPTY: no folder chosen yet -->
+    <section class="state s-empty">
+      <h1>Sort photos by the date they were taken</h1>
+      <div class="folders">
+        <span>Source</span><div class="field placeholder">Choose the folder with your photos (subfolders included)</div><label for="st-scanning" class="btn">Browse…</label>
+        <span>Destination</span><div class="field placeholder">Choose where the Year\Month folders go</div><label for="st-scanning" class="btn">Browse…</label>
+      </div>
+      <div class="card" style="padding:40px 20px;text-align:center;">
+        <div style="font-size:15px;font-weight:600;">Nothing to show yet</div>
+        <p class="muted">Pick both folders, then press Scan. Scan only looks &ndash; it never moves or changes a file.</p>
+      </div>
+      <div class="actions"><span class="spacer"></span><span class="btn primary disabled">Scan</span></div>
+    </section>
+
+    <!-- SCANNING -->
+    <section class="state s-scanning">
+      <h1>Scanning…</h1>
+      <div class="folders">
+        <span>Source</span><div class="field">D:\Phone backup\Camera</div><span class="btn disabled">Browse…</span>
+        <span>Destination</span><div class="field">D:\Sorted photos</div><span class="btn disabled">Browse…</span>
+      </div>
+      <div class="card" style="padding:28px 24px;">
+        <div style="font-weight:600;">Reading dates from your files</div>
+        <div class="bar"><i></i></div>
+        <div class="muted">1,248 files checked &middot; 1,102 photos and videos found</div>
+        <div class="muted" style="margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">D:\Phone backup\Camera\WhatsApp Images\IMG-20160315-WA0020.jpg</div>
+      </div>
+      <p class="muted">Nothing is being moved. Scan only reads files.</p>
+      <div class="actions"><span class="spacer"></span><label for="st-preview" class="btn">Mock: finish scan &rarr;</label><span class="btn primary disabled">Scan</span></div>
+    </section>
+
+    <!-- PREVIEW -->
+    <section class="state s-preview">
+      <h1>Preview</h1>
+      <div class="folders">
+        <span>Source</span><div class="field">D:\Phone backup\Camera</div><label for="st-scanning" class="btn">Browse…</label>
+        <span>Destination</span><div class="field">D:\Sorted photos</div><label for="st-scanning" class="btn">Browse…</label>
+      </div>
+      <div class="banner ok"><span class="icon">&#x2713;</span><div><b>Scan finished. Nothing has been moved yet.</b><br>
+        <span class="muted">1,102 files found: <b>1,071</b> will move &middot; <b style="color:var(--warn)">24 have no date</b> and will stay &middot; 7 won&rsquo;t move for other reasons</span></div></div>
+      <div class="card scroll" style="max-height:290px;overflow-y:auto;">
+        <table>
+          <thead><tr><th>File</th><th>Date</th><th>From</th><th>Goes to</th></tr></thead>
+          <tbody>
+            <tr class="group"><td colspan="4">Will move (1,071)</td></tr>
+            <tr><td>IMG_4821.jpg</td><td>2019-07-04</td><td><span class="tag">Photo info</span></td><td>2019\07\</td></tr>
+            <tr><td>VID_20210514.mp4</td><td>2021-05-14</td><td><span class="tag">Video</span></td><td>2021\05\</td></tr>
+            <tr><td>IMG-20160315-WA0020.jpg</td><td>2016-03-15</td><td><span class="tag">File name</span></td><td>2016\03\</td></tr>
+            <tr><td>Screenshot_20230102-101010.png</td><td>2023-01-02</td><td><span class="tag">File name</span></td><td>2023\01\</td></tr>
+            <tr><td>写真.jpg</td><td>2022-10-09</td><td><span class="tag">Photo info</span></td><td>2022\10\</td></tr>
+            <tr><td>Café 😀.jpg</td><td>2020-12-24</td><td><span class="tag">Photo info</span></td><td>2020\12\</td></tr>
+            <tr><td>a.jpg</td><td>2018-06-30</td><td><span class="tag">Photo info</span></td><td>2018\06\a (2).jpg <span class="muted">(name already taken)</span></td></tr>
+
+            <tr class="group nodate"><td colspan="4">&#x26A0; No date &ndash; these 24 files will stay where they are</td></tr>
+            <tr><td colspan="4" class="muted" style="white-space:normal;background:var(--warn-bg);">They stay where they are. To sort them, rename them with a date (like 20190704) and scan again, or sort them by hand.</td></tr>
+            <tr><td>holiday.jpg</td><td class="muted">&mdash;</td><td><span class="tag none">None</span></td><td class="muted">Stays in D:\Phone backup\Camera</td></tr>
+            <tr><td>IMG_final_v2.heic</td><td class="muted">&mdash;</td><td><span class="tag none">None</span></td><td class="muted">Stays in D:\Phone backup\Camera\Old</td></tr>
+            <tr><td>received_9981.webp</td><td class="muted">&mdash;</td><td><span class="tag none">None</span></td><td class="muted">Stays in D:\Phone backup\Camera</td></tr>
+
+            <tr class="group"><td colspan="4">Won&rsquo;t move (other reasons)</td></tr>
+            <tr><td>b.jpg</td><td>2017-08-02</td><td><span class="tag">Photo info</span></td><td><span class="tag skip">Already in destination</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <label for="st-empty" class="btn">Start over</label>
+        <span class="muted">Move, not copy. Files are never changed.</span>
+        <span class="spacer"></span>
+        <label for="st-error" class="btn">Mock: scan error</label>
+        <label for="st-scanning" class="btn">Scan again</label>
+        <label for="st-done" class="btn primary">Sort 1,071 files</label>
+      </div>
+    </section>
+
+    <!-- DONE -->
+    <section class="state s-done">
+      <h1>Done</h1>
+      <div class="folders">
+        <span>Source</span><div class="field">D:\Phone backup\Camera</div><span class="btn disabled">Browse…</span>
+        <span>Destination</span><div class="field">D:\Sorted photos</div><span class="btn disabled">Browse…</span>
+      </div>
+      <div class="banner ok"><span class="icon">&#x2713;</span><div><b>1,069 files moved to D:\Sorted photos</b><br>
+        <span class="muted">Changed your mind? Undo puts every file back where it was.</span></div></div>
+      <div class="banner warn"><span class="icon">!</span><div><b>2 files were not moved</b> &ndash; they are still in the source folder</div></div>
+      <div class="card scroll">
+        <table>
+          <thead><tr><th>File</th><th>Why it wasn&rsquo;t moved</th></tr></thead>
+          <tbody>
+            <tr><td>IMG_5530.jpg</td><td><span class="tag none">Access denied</span></td></tr>
+            <tr><td>VID_20240301.mp4</td><td><span class="tag none">Still changing, scan again</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">The 24 files with no date and 7 others skipped at Scan were not part of this sort.</p>
+      <div class="actions">
+        <label for="st-empty" class="btn">Sort another folder</label>
+        <span class="spacer"></span>
+        <label for="st-preview" class="btn primary">Undo last sort</label>
+      </div>
+      <p class="muted" style="margin:10px 0 0;font-size:12px;">Undo is only available until the next sort or until you close WhenFiled.</p>
+    </section>
+
+    <!-- ERROR: destination inside source, Scan refuses -->
+    <section class="state s-error">
+      <h1>Sort photos by the date they were taken</h1>
+      <div class="folders">
+        <span>Source</span><div class="field">D:\Phone backup\Camera</div><label for="st-scanning" class="btn">Browse…</label>
+        <span>Destination</span><div class="field bad">D:\Phone backup\Camera\Sorted</div><label for="st-scanning" class="btn">Browse…</label>
+      </div>
+      <div class="banner err"><span class="icon">&#x2715;</span><div><b>Scan didn&rsquo;t start</b><br>
+        The destination can&rsquo;t be inside the source folder. Choose a destination outside D:\Phone backup\Camera.<br>
+        <span class="muted">Nothing was scanned or moved.</span></div></div>
+      <div class="card" style="padding:40px 20px;text-align:center;">
+        <div style="font-size:15px;font-weight:600;">Nothing to show yet</div>
+        <p class="muted">Fix the destination, then press Scan.</p>
+      </div>
+      <div class="actions"><span class="spacer"></span><label for="st-scanning" class="btn primary">Scan</label></div>
+    </section>
+  </div>
+</div>
+
+</body>
+</html>
