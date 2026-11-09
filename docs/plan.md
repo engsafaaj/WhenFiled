@@ -35,7 +35,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - Date found: `IMG-20160315-WA0020.jpg`, `Screenshot_20230102-101010.png`, `VID_20210514.mp4`, `PXL_20230102_101010123.jpg`, `2019-07-04 10.11.12.jpg`.
     - No date: `holiday.jpg`, `IMG_4821.jpg`, `20161332.jpg`, `20160230.jpg`, `1577836800000.jpg`.
 
-- [ ] **T5 DateResolver.** Picks the date and From in the spec's order.
+- [x] **T5 DateResolver.** Picks the date and From in the spec's order.
   - Test `DateResolverTests`:
     - EXIF beats the video time and the file name (AC1).
     - The video time beats the file name (AC2).
