@@ -43,7 +43,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - A future EXIF date falls through.
     - Nothing found → None (AC4).
 
-- [ ] **T6 Folder rules and target path (D12, D13).**
+- [x] **T6 Folder rules and target path (D12, D13).**
   - Test `PathRulesTests`:
     - `D:\A` + `D:\A\B` → inside.
     - `D:\A` + `D:\A` → refused.
