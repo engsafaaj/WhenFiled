@@ -12,6 +12,11 @@
     <UseWPF>true</UseWPF>
     <!-- D21: ThemeMode (Fluent) is still marked experimental. Suppressed here only. -->
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <!-- Release: publish as one self-contained exe (native WPF libraries packed inside). -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
 </Project>
