@@ -45,14 +45,16 @@ public static class Planner
             taken[folder] = planned = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var existing = new HashSet<string>(view.FileNames(folder), StringComparer.OrdinalIgnoreCase);
 
+        // Walk name, name (2), name (3)...: an identical file under any of them is "already there".
         var finalName = name;
-        if (existing.TryGetValue(name, out var existingName)
-            && !planned.Contains(name)
-            && view.IsSameContent(file.Path, folder + "\\" + existingName))
-            return WontMove(file, AlreadyThere);
-
         for (var n = 2; existing.Contains(finalName) || planned.Contains(finalName); n++)
+        {
+            if (existing.TryGetValue(finalName, out var existingName)
+                && !planned.Contains(finalName)
+                && view.IsSameContent(file.Path, folder + "\\" + existingName))
+                return WontMove(file, AlreadyThere);
             finalName = Numbered(name, n);
+        }
 
         if (TargetPath.IsTooLong(folder + "\\" + finalName))
             return WontMove(file, TargetPath.TooLongReason);

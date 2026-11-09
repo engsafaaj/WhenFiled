@@ -65,6 +65,17 @@ public class PlannerTests
     }
 
     [Fact]
+    public void Identical_file_already_there_under_a_2_name_is_not_moved_again()
+    {
+        var view = new FakeView();
+        view.Has(July, "a.jpg", "a (2).jpg");
+        view.Identical.Add(@"C:\in\a.jpg|" + July + @"\a (2).jpg");
+        var item = Assert.Single(Plan(view, File(@"C:\in\a.jpg")));
+        Assert.Equal(PlanStatus.WontMove, item.Status);
+        Assert.Equal("Already in destination", item.Reason);
+    }
+
+    [Fact]
     public void If_2_is_taken_too_it_gets_3()
     {
         var view = new FakeView();
