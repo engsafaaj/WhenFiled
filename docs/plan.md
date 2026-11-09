@@ -30,7 +30,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - 2021-05-14 10:00 UTC → 2021-05-14.
     - 2021-05-31 22:30 UTC in UTC+2 → 2021-06-01.
 
-- [ ] **T4 Dates in file names (D8).**
+- [x] **T4 Dates in file names (D8).**
   - Test `FileNameDateTests`:
     - Date found: `IMG-20160315-WA0020.jpg`, `Screenshot_20230102-101010.png`, `VID_20210514.mp4`, `PXL_20230102_101010123.jpg`, `2019-07-04 10.11.12.jpg`.
     - No date: `holiday.jpg`, `IMG_4821.jpg`, `20161332.jpg`, `20160230.jpg`, `1577836800000.jpg`.
