@@ -15,7 +15,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - `dotnet build` has 0 warnings.
     - Every command in CLAUDE.md runs.
 
-- [ ] **T2 MediaFilter and valid date range (D10).**
+- [x] **T2 MediaFilter and valid date range (D10).**
   - Test `MediaFilterTests`:
     - Accepted in any case: `.jpg .jpeg .heic .png .webp .mp4 .mov .3gp`.
     - Rejected: `notes.txt`, `Thumbs.db`, `x.pdf`, `photo.jpg.txt` and a zero-byte `empty.jpg` (AC7).
