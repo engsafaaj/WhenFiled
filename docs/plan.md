@@ -72,7 +72,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - A destination inside the source → refused.
   - By hand (NOT DONE yet, needs real phone file copies): Scan a copy of real phone files, one of each type (JPEG, HEIC, PNG, WebP, MP4, MOV, 3GP). Each one shows the right date and From. If 3GP fails, add the small `mvhd` reader from D5.
 
-- [ ] **T9 Mover: Sort and Undo (D16–D19).** Includes `MoveFailure.ReasonFor` and `UndoLog`.
+- [x] **T9 Mover: Sort and Undo (D16–D19).** Includes `MoveFailure.ReasonFor` and `UndoLog`.
   - Test `MoveFailureTests`:
     - Access denied → "Access denied".
     - Sharing or lock violation → "Still changing, scan again".
