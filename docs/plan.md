@@ -66,11 +66,11 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - 1,071 to move, 24 with no date and 7 others → "Sort 1,071 files" and the mock's banner text.
     - Nothing to move → Sort is off.
 
-- [ ] **T8 Scanner (D5, D6, D11, D15).** Folder check, file list, MetadataExtractor and the same-content check.
+- [x] **T8 Scanner (D5, D6, D11, D15).** Folder check, file list, MetadataExtractor and the same-content check.
   - Test `ScannerTests` (temp folder):
     - After Scan, every source file has the same SHA-256, modified time and attributes, and the destination has no new folders (AC5).
     - A destination inside the source → refused.
-  - By hand: Scan a copy of real phone files, one of each type (JPEG, HEIC, PNG, WebP, MP4, MOV, 3GP). Each one shows the right date and From. If 3GP fails, add the small `mvhd` reader from D5.
+  - By hand (NOT DONE yet, needs real phone file copies): Scan a copy of real phone files, one of each type (JPEG, HEIC, PNG, WebP, MP4, MOV, 3GP). Each one shows the right date and From. If 3GP fails, add the small `mvhd` reader from D5.
 
 - [ ] **T9 Mover: Sort and Undo (D16–D19).** Includes `MoveFailure.ReasonFor` and `UndoLog`.
   - Test `MoveFailureTests`:

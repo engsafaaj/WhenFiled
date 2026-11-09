@@ -24,5 +24,17 @@ public static class PathRules
         return FolderCheck.Ok;
     }
 
+    /// <summary>The text for the window when Scan refuses to start, or null when Ok.</summary>
+    public static string? Refusal(FolderCheck check, string source) => check switch
+    {
+        FolderCheck.DestinationInsideSource =>
+            $"The destination can’t be inside the source folder. Choose a destination outside {source}.",
+        FolderCheck.DestinationIsSource =>
+            "The destination can’t be the same folder as the source. Choose a different destination.",
+        FolderCheck.DifferentDrives =>
+            "The source and destination must be on the same drive. WhenFiled moves files, it doesn’t copy them.",
+        _ => null,
+    };
+
     private static string WithSlash(string path) => path.TrimEnd('\\', '/') + "\\";
 }
