@@ -38,20 +38,32 @@ public sealed class Mover
         var notRestored = new List<NotMoved>();
         var restored = 0;
 
+        var failedMoves = new List<(string From, string To)>();
         foreach (var (from, to) in _log.MovesNewestFirst)
         {
             var reason = RestoreOne(from, to);
             if (reason is null) restored++;
-            else notRestored.Add(new NotMoved(from, reason));
+            else
+            {
+                notRestored.Add(new NotMoved(from, reason));
+                failedMoves.Add((from, to));
+            }
         }
 
+        var keptFolders = new List<string>();
         foreach (var folder in _log.FoldersDeepestFirst)
         {
             try { Directory.Delete(folder); } // 1 argument: only an empty folder goes
-            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            {
+                keptFolders.Add(folder);
+            }
         }
 
-        _log.Clear();
+        // Keep what did not go back, so Undo can be pressed again (spec: Undo returns every file).
+        _log = new UndoLog();
+        foreach (var (from, to) in Enumerable.Reverse(failedMoves)) _log.RecordMove(from, to);
+        foreach (var folder in keptFolders) _log.RecordFolder(folder);
         return new UndoResult(restored, notRestored);
     }
 

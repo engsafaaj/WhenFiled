@@ -148,6 +148,29 @@ public class MoverTests
     }
 
     [Fact]
+    public void Undo_keeps_a_file_that_did_not_go_back_so_it_can_be_retried()
+    {
+        using var t = new TempFolder();
+        var src = t.Dir("src");
+        var dst = t.Dir("dst");
+        var a = t.File(@"src\IMG-20160315-a.jpg", "A");
+        var mover = new Mover();
+        mover.Sort(Scan(src, dst));
+        t.File(@"src\IMG-20160315-a.jpg", "new file"); // takes the original place
+
+        var first = mover.Undo();
+
+        Assert.Single(first.NotRestored);
+        Assert.True(mover.CanUndo);
+        File.Delete(a); // test file in a temp folder, not a photo
+        var second = mover.Undo();
+        Assert.Equal(1, second.Restored);
+        Assert.Empty(second.NotRestored);
+        Assert.Equal("A", File.ReadAllText(a));
+        Assert.False(mover.CanUndo);
+    }
+
+    [Fact]
     public void Undo_does_not_overwrite_a_file_now_at_the_original_path()
     {
         using var t = new TempFolder();
