@@ -87,7 +87,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
       - A created folder that now holds another file is kept.
     - **File held open** (AC9): it gets "Still changing, scan again", and the next file still moves.
 
-- [ ] **T10 Window and acceptance run (D20–D24).** `MainWindow` with the mock's states, calling `Scanner` and `Mover`.
+- [ ] **T10 Window and acceptance run (D20–D24). Window built and starts; by-hand checks NOT DONE yet.** `MainWindow` with the mock's states, calling `Scanner` and `Mover`.
   - Test, by hand:
     - Each state matches the mock.
     - Run AC1–AC10 on a fresh copy of a test folder, then tick the boxes in [spec.md](spec.md).

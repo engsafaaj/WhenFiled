@@ -202,3 +202,10 @@ The rules get unit tests. `Mover` gets a few temp-folder tests (never overwrite,
 The window is checked by hand against the mock.
 
 **Reason:** the window has little logic, and the rules and moves are covered by tests.
+
+### D28. Window details the mock leaves open
+- Choosing a new folder in Preview or Error goes back to Empty with both folders kept, because the old preview no longer matches them. "Start over" and "Sort another folder" clear both folders.
+- Scan checks the folder pair (same, inside, different drives) before it checks that the destination exists, so a missing destination inside the source still gets the "inside" message.
+- If Undo can't put some files back, a message box lists up to 10 of them. The scan after Undo then runs as in D24.
+
+**Reason:** these are the smallest behaviours that keep the screen true to the disk without adding states.

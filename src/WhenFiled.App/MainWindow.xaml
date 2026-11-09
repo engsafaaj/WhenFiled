@@ -5,8 +5,184 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WhenFiled.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="WhenFiled" Height="720" Width="960" MinHeight="560" MinWidth="720"
+        Background="#F3F3F3">
+    <Window.Resources>
+        <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#0067C0"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style x:Key="Muted" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#5D5D5D"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="Banner" TargetType="Border">
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,12,0,0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="20,16,20,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="Heading" Grid.Row="0" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12"
+                   Text="Sort photos by the date they were taken"/>
 
+        <Grid Grid.Row="1" Margin="0,0,0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Source" VerticalAlignment="Center"/>
+            <Border x:Name="SourceBox" Grid.Column="1" Margin="0,0,10,8" Height="32" Background="White"
+                    BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="10,0">
+                <TextBlock x:Name="SourceText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Text="Choose the folder with your photos (subfolders included)"/>
+            </Border>
+            <Button x:Name="BrowseSource" Grid.Column="2" Margin="0,0,0,8" Height="32" Content="Browse…"/>
+            <TextBlock Grid.Row="1" Text="Destination" VerticalAlignment="Center"/>
+            <Border x:Name="DestBox" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" Height="32" Background="White"
+                    BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4" Padding="10,0">
+                <TextBlock x:Name="DestText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                           Text="Choose where the Year\Month folders go"/>
+            </Border>
+            <Button x:Name="BrowseDest" Grid.Row="1" Grid.Column="2" Height="32" Content="Browse…"/>
+        </Grid>
+
+        <StackPanel Grid.Row="2">
+            <Border x:Name="Banner" Style="{StaticResource Banner}" Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="BannerIcon" FontWeight="Bold" Margin="0,0,10,0"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock x:Name="BannerTitle" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="BannerDetail" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border x:Name="Banner2" Style="{StaticResource Banner}" Background="#FFF4CE" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="!" FontWeight="Bold" Foreground="#9D5D00" Margin="0,0,10,0"/>
+                    <TextBlock x:Name="Banner2Text" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="0,12,0,0">
+            <!-- Empty and Error: nothing to show yet -->
+            <Border x:Name="EmptyCard" Background="#FBFBFB" BorderBrush="#E0E0E0" BorderThickness="1"
+                    CornerRadius="6" Padding="20,40" VerticalAlignment="Top">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Nothing to show yet" FontSize="15" FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="EmptyText" Style="{StaticResource Muted}" Margin="0,8,0,0"
+                               TextAlignment="Center"
+                               Text="Pick both folders, then press Scan. Scan only looks – it never moves or changes a file."/>
+                </StackPanel>
+            </Border>
+            <!-- Scanning -->
+            <Border x:Name="ScanCard" Background="#FBFBFB" BorderBrush="#E0E0E0" BorderThickness="1"
+                    CornerRadius="6" Padding="24,28" VerticalAlignment="Top" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="Reading dates from your files" FontWeight="SemiBold"/>
+                    <ProgressBar IsIndeterminate="True" Height="4" Margin="0,14"/>
+                    <TextBlock x:Name="ScanCounts" Style="{StaticResource Muted}"/>
+                    <TextBlock x:Name="ScanPath" Style="{StaticResource Muted}" Margin="0,4,0,0"
+                               TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,14,0,0"
+                               Text="Nothing is being moved. Scan only reads files."/>
+                </StackPanel>
+            </Border>
+            <!-- Preview (stays on screen while sorting) -->
+            <ListView x:Name="PreviewList" Visibility="Collapsed" Background="#FBFBFB"
+                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      ScrollViewer.CanContentScroll="True">
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="GroupItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="GroupItem">
+                                            <StackPanel>
+                                                <Border Background="{Binding Name.Brush}" Padding="10,6">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Name.Title}" FontWeight="SemiBold"
+                                                                   FontSize="12" Foreground="{Binding Name.Fore}"/>
+                                                        <TextBlock Text="{Binding Name.Note}" Style="{StaticResource Muted}"
+                                                                   Margin="0,4,0,0"
+                                                                   Visibility="{Binding Name.NoteVisibility}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <ItemsPresenter/>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="File" Width="300" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding DateText}"/>
+                        <GridViewColumn Header="From" Width="100" DisplayMemberBinding="{Binding FromText}"/>
+                        <GridViewColumn Header="Goes to" Width="380" DisplayMemberBinding="{Binding GoesText}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <!-- Done: files that were not moved -->
+            <StackPanel x:Name="DonePanel" Visibility="Collapsed" VerticalAlignment="Top">
+                <ListView x:Name="FailedList" Background="#FBFBFB" MaxHeight="300">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="File" Width="420" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Why it wasn’t moved" Width="400"
+                                            DisplayMemberBinding="{Binding Reason}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <TextBlock x:Name="DoneNote" Style="{StaticResource Muted}" Margin="0,12,0,0"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="4" Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="StartOverButton" Height="32" Content="Start over" Visibility="Collapsed"/>
+                <TextBlock x:Name="Hint" Style="{StaticResource Muted}" VerticalAlignment="Center"
+                           Margin="12,0,0,0" Visibility="Collapsed"
+                           Text="Move, not copy. Files are never changed."/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button x:Name="UndoButton" Height="32" Margin="0,0,8,0" Content="Undo last sort"
+                        Visibility="Collapsed"/>
+                <Button x:Name="ScanButton" Height="32" Margin="0,0,8,0" Content="Scan"
+                        Style="{StaticResource Primary}"/>
+                <Button x:Name="SortButton" Height="32" Style="{StaticResource Primary}" Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
