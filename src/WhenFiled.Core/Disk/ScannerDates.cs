@@ -19,8 +19,10 @@ public sealed partial class Scanner
         {
             directories = ImageMetadataReader.ReadMetadata(stream);
         }
-        catch (Exception e) when (e is ImageProcessingException or EndOfStreamException
-            or InvalidDataException or ArgumentException or NotSupportedException)
+        // Any parser error on a corrupt file means "no date". Only a real read problem
+        // (locked, refused, I/O) is left to throw so the caller can report it.
+        catch (Exception e) when (e is EndOfStreamException
+            || e is not (IOException or UnauthorizedAccessException))
         {
             return new RawDates(null, null);
         }
