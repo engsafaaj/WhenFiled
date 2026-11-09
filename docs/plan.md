@@ -21,7 +21,7 @@ Ten small tasks, in order. Each one names the test that proves it is done. Tick 
     - Rejected: `notes.txt`, `Thumbs.db`, `x.pdf`, `photo.jpg.txt` and a zero-byte `empty.jpg` (AC7).
   - Test `ValidDateTests`, with today = 2026-11-09: 1989-12-31 no, 1990-01-01 yes, 2026-11-10 yes, 2026-11-11 no.
 
-- [ ] **T3 EXIF and video dates (D7, D9).**
+- [x] **T3 EXIF and video dates (D7, D9).**
   - Test `ExifDateTests`:
     - `2019:07:04 10:11:12` → 2019-07-04.
     - No date: `0000:00:00 00:00:00`, blank, null and `2019:02:30 10:00:00`.
