@@ -6,7 +6,8 @@ public static partial class FileNameDate
 {
     // YYYYMMDD, or YYYY-MM-DD / YYYY_MM_DD with the same separator twice.
     // No digit may touch either end of the match (D8).
-    [GeneratedRegex(@"(?<!\d)(?:(?<y>\d{4})(?<m>\d{2})(?<d>\d{2})|(?<y>\d{4})(?<s>[-_])(?<m>\d{2})\k<s>(?<d>\d{2}))(?!\d)")]
+    // ASCII digits only: \d also matches Arabic-Indic and full-width digits, which int.Parse rejects.
+    [GeneratedRegex(@"(?<![0-9])(?:(?<y>[0-9]{4})(?<m>[0-9]{2})(?<d>[0-9]{2})|(?<y>[0-9]{4})(?<s>[-_])(?<m>[0-9]{2})\k<s>(?<d>[0-9]{2}))(?![0-9])")]
     private static partial Regex Pattern();
 
     /// <summary>The first real, in-range date in the name, or null (D8).</summary>

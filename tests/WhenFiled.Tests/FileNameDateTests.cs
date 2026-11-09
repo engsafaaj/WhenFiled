@@ -21,6 +21,8 @@ public class FileNameDateTests
     [InlineData("20161332.jpg")]
     [InlineData("20160230.jpg")]
     [InlineData("1577836800000.jpg")]
+    [InlineData("IMG_٢٠١٦٠٣١٥.jpg")]
+    [InlineData("IMG_２０１６０３１５.jpg")]
     public void Finds_no_date(string name) =>
         Assert.Null(FileNameDate.Find(name, Today));
 }
