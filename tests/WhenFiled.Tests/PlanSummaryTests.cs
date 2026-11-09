@@ -32,6 +32,14 @@ public class PlanSummaryTests
     }
 
     [Fact]
+    public void One_no_date_file_is_singular_in_the_banner()
+    {
+        Assert.Equal(
+            "1 file found: 0 will move · 1 has no date and will stay · 0 won’t move for other reasons",
+            PlanSummary.From(Items(0, 1, 0)).BannerDetail);
+    }
+
+    [Fact]
     public void Nothing_to_move_turns_Sort_off()
     {
         var s = PlanSummary.From(Items(0, 24, 7));

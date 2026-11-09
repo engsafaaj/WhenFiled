@@ -46,7 +46,9 @@ public static class RowBuilder
     {
         var move = new GroupInfo($"Will move ({PlanSummary.Format(summary.ToMove)})", null, Grey, Text);
         var none = new GroupInfo(
-            $"⚠ No date – these {PlanSummary.Format(summary.NoDate)} files will stay where they are",
+            summary.NoDate == 1
+                ? "⚠ No date – this 1 file will stay where it is"
+                : $"⚠ No date – these {PlanSummary.Format(summary.NoDate)} files will stay where they are",
             NoDateNote, WarnBg, WarnFore);
         var other = new GroupInfo("Won’t move (other reasons)", null, Grey, Text);
 

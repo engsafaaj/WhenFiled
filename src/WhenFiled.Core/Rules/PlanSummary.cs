@@ -7,12 +7,12 @@ public record PlanSummary(int ToMove, int NoDate, int Other)
 {
     public int Found => ToMove + NoDate + Other;
     public bool CanSort => ToMove > 0;
-    public string SortButton => $"Sort {Format(ToMove)} {(ToMove == 1 ? "file" : "files")}";
+    public string SortButton => $"Sort {Files(ToMove)}";
     public string BannerTitle => "Scan finished. Nothing has been moved yet.";
 
     public string BannerDetail =>
-        $"{Format(Found)} files found: {Format(ToMove)} will move · " +
-        $"{Format(NoDate)} have no date and will stay · " +
+        $"{Files(Found)} found: {Format(ToMove)} will move · " +
+        $"{Format(NoDate)} {(NoDate == 1 ? "has" : "have")} no date and will stay · " +
         $"{Format(Other)} won’t move for other reasons";
 
     public static PlanSummary From(IEnumerable<PlanItem> items)
@@ -28,4 +28,7 @@ public record PlanSummary(int ToMove, int NoDate, int Other)
     }
 
     public static string Format(int n) => n.ToString("N0", CultureInfo.InvariantCulture);
+
+    /// <summary>A count with its noun in the singular for 1: "1 file", "1,071 files".</summary>
+    public static string Files(int n) => $"{Format(n)} {(n == 1 ? "file" : "files")}";
 }
